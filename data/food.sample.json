@@ -1,0 +1,15 @@
+{
+  "restaurants": [
+    {
+      "name": "La Lucciola",
+      "day": 1,
+      "time": "19:30",
+      "price": "\u00a3\u00a3",
+      "cuisine": "Italian/Seafood",
+      "meal": "Dinner",
+      "location": "Petitenget Beach, Seminyak",
+      "menu": null,
+      "tiktok": null
+    }
+  ]
+}

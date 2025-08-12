@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🌴 Custom Bali Travel styles */
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+* { box-sizing: border-box; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.swiper {
+  overflow: hidden !important; /* prevent wrapper growing wider than viewport */
+}
+
+.swiper-wrapper {
+  align-items: stretch; /* keep slide height consistent */
+}
+
+.swiper-slide {
+  width: 100% !important; /* never exceed viewport width */
+}
+
+.parallax { background-attachment: fixed; background-size: cover; background-position:center; }
+
+/* Optional smooth scroll + animations */
+html {
+  scroll-behavior: smooth;
+}
+
+.parallax-header {
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.card {
+  @apply rounded-lg shadow-md bg-white p-4 transition-transform transform hover:scale-[1.02];
+}
+/* --- Flight Window styles --- */
+.flight-window-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+/* blurred destination background + soft gradient */
+.flight-window-wrap::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  filter: blur(14px) saturate(1.05);
+  transform: scale(1.04); /* hide blur edges */
+  z-index: 0;
+}
+.flight-window-wrap::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(60% 80% at 40% 20%, rgba(0,0,0,.25), transparent 60%),
+              linear-gradient(to bottom, rgba(0,0,0,.15), rgba(0,0,0,.35));
+  z-index: 1;
+}
+
+/* the “airplane window” frame */
+.window-frame {
+  position: relative;
+  width: 280px; height: 420px;
+  border-radius: 42%/50%;
+  background: #e9eaee;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.8),
+    inset 0 -8px 18px rgba(0,0,0,.15),
+    0 8px 30px rgba(0,0,0,.25);
+  border: 2px solid #d7dae4;
+}
+.window-rim {
+  position: absolute; inset: 14px;
+  border-radius: 44%/52%;
+  background: #f6f7fb;
+  box-shadow: inset 0 8px 16px rgba(0,0,0,.08);
+}
+.window-view {
+  position: absolute; inset: 28px;
+  border-radius: 46%/54%;
+  overflow: hidden;
+  background: #000;
+}
+.window-view img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
+
+.app-layer {
+  position: relative;
+  z-index: 2;
+}
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;           /* was -1; keep it at 0 */
+  pointer-events: none;
+  overflow: hidden;
+  transition: background 600ms ease;
+}
+
+/* GPU friendly transforms */
+.sky::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(var(--sky-angle, 180deg), var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-bottom) 100%);
+  /* keep gradient static so it doesn't “move” */
+  transform: translate3d(0, 0, 0);
+  will-change: background;
+  transition: background 600ms ease;
+}
+
+.sky .clouds {
+  position: absolute; inset: -20% -10%;
+  background-image:
+    radial-gradient(60px 30px at 20% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0) 60%),
+    radial-gradient(80px 35px at 60% 50%, rgba(255,255,255,0.28), rgba(255,255,255,0) 60%),
+    radial-gradient(70px 30px at 80% 20%, rgba(255,255,255,0.25), rgba(255,255,255,0) 60%),
+    radial-gradient(90px 40px at 30% 70%, rgba(255,255,255,0.22), rgba(255,255,255,0) 60%);
+  animation: clouds-move 48s linear infinite;
+  filter: blur(6px);
+  opacity: var(--clouds-opacity, 0.6);
+  /* only clouds parallax */
+  transform: translate3d(0, var(--parallaxY, 0px), 0);
+  will-change: transform;
+}
+
+@keyframes clouds-move {
+  0%   { transform: translate3d(-10%, 0, 0) }
+  100% { transform: translate3d(10%, 0, 0) }
+}
+
+.sky .stars {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.9), rgba(255,255,255,0)),
+    radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.8), rgba(255,255,255,0)),
+    radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,.8), rgba(255,255,255,0)),
+    radial-gradient(1px 1px at 70% 65%, rgba(255,255,255,.9), rgba(255,255,255,0)),
+    radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,.7), rgba(255,255,255,0));
+  opacity: var(--stars-opacity, 0);
+  animation: stars-twinkle 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes stars-twinkle {
+  from { opacity: calc(var(--stars-opacity, 0) * 0.7); }
+  to   { opacity: var(--stars-opacity, 0); }
+}
+
+
+
+/* ====== Subtle mount animation for the header ====== */
+.header-anim {
+  opacity: 0;
+  transform: translateY(-6px);
+  animation: header-in 420ms cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes header-in {
+  to { opacity: 1; transform: translateY(0); }
+}

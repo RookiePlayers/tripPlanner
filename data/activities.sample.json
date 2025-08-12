@@ -1,0 +1,23 @@
+{
+  "days": [
+    {
+      "date": "2025-08-20",
+      "dayNumber": 1,
+      "headerImage": "/images/day1.jpg",
+      "items": [
+        {
+          "name": "Arrival & Check-in",
+          "time": "12:00",
+          "zone": "Seminyak",
+          "category": "Logistics",
+          "booked": true,
+          "paid": true,
+          "price": 0,
+          "location": "Jalan Wirasaba No 5, Seminyak",
+          "ticket": null,
+          "tiktok": null
+        }
+      ]
+    }
+  ]
+}

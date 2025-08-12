@@ -1,0 +1,50 @@
+{
+  "name": "bali-travel-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "postinstall": "mkdir -p public && cp node_modules/pdfjs-dist/build/pdf.worker.mjs public/pdf.worker.mjs"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@motionone/react": "^10.16.4",
+    "@mui/joy": "5.0.0-beta.52",
+    "@notionhq/client": "^4.0.1",
+    "@react-pdf-viewer/core": "3.12.0",
+    "@react-pdf-viewer/default-layout": "3.12.0",
+    "autoprefixer": "10.4.20",
+    "clsx": "2.1.1",
+    "date-fns": "^4.1.0",
+    "dayjs": "1.11.13",
+    "framer-motion": "11.2.12",
+    "lucide-react": "0.446.0",
+    "motion": "^12.23.12",
+    "next": "14.2.5",
+    "pdfjs-dist": "5.3.31",
+    "postcss": "8.4.41",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-pdf": "^10.0.1",
+    "ruki-react-layouts": "^1.0.8",
+    "swiper": "^11.1.12",
+    "swr": "2.2.5",
+    "tailwindcss": "3.4.7",
+    "unsplash-js": "^7.0.19",
+    "whatwg-fetch": "^3.6.20",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "24.2.1",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "typescript": "5.5.4"
+  },
+  "packageManager": "pnpm@10.14.0+sha512.ad27a79641b49c3e481a16a805baa71817a04bbe06a38d17e60e2eaee83f6a146c6a688125f5792e48dd5ba30e7da52a5cda4c3992b9ccf333f9ce223af84748"
+}
