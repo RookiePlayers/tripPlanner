@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server'
 import { Client } from '@notionhq/client'
 import type { DocumentRow } from '../../../../types'
+import { getUrl } from '../../utils'
 
 const PROP = {
   name:      ['Name', 'Title'],
-  status:    ['Status'],
+  status:    ['Status','Documentation Status'],
   type:      ['Type', 'Document Type'],
   paid:      ['Paid'],
   assigned:  ['Date Assigned', 'Assigned'],
   expiring:  ['Date Expiring', 'Expiry', 'Expires'],
   files:     ['Files', 'File', 'Attachment','files'],
-  personRel: ['Person', 'Traveller', 'Guest'], // Relation -> People DB
+  personRel: ['Person', 'Traveller', 'Guest', "people"], // Relation -> People DB
 } as const
 
 export async function GET() {
@@ -40,37 +41,30 @@ export async function GET() {
       cursor = r.has_more ? r.next_cursor! : undefined
     } while (cursor)
 
+
     // 2) Collect all relation target page IDs we need to expand
     const personIds = new Set<string>()
-    for (const page of pages) {
-      const relIds = getRelationIds(page.properties, PROP.personRel)
-      relIds.forEach((id:any) => personIds.add(id))
-    }
-
-    // 3) Batch fetch related person pages (cache in a map)
     const peopleMap = new Map<string, { name: string | null; avatar: string | null }>()
-    if (personIds.size) {
-      // Notion rate limits are fine with ~3–5 RPS; this is small enough for 1 batch
-      const ids = Array.from(personIds)
-      const results = await Promise.all(ids.map(async (id) => {
-        try {
-          const p = await notion.pages.retrieve({ page_id: id })
-          const { name, avatar } = extractPerson(p as any)
-          return { id, name, avatar }
-        } catch {
-          return { id, name: null, avatar: null }
-        }
-      }))
-      results.forEach(({ id, name, avatar }) => {
-        peopleMap.set(id, { name, avatar })
+    for (const page of pages) {
+      const relIds = getRelation(page.properties, PROP.personRel)
+      relIds.forEach((key) => {
+        personIds.add(key.id)
+        peopleMap.set(key.id, { name: key.name, avatar: key.avatar })
       })
     }
+
+    console.log('Documents', { count: pages.length, personIds: personIds.size })
+
+    // 3) Batch fetch related person pages (cache in a map)
+ 
 
     // 4) Build API shape
     const documents: DocumentRow[] = pages.map((page: any) => {
       const props = page.properties
-      const relIds = getRelationIds(props, PROP.personRel)
-      const primaryPerson = relIds.length ? peopleMap.get(relIds[0]) ?? null : null
+      const relIds = getRelation(props, PROP.personRel)
+      console.log(relIds)
+      const primaryPerson = relIds.length ? peopleMap.get(relIds[0].id) ?? null : null
+      console.log(getTitle(props, PROP.name))
 
       return {
         id: page.id,
@@ -82,7 +76,7 @@ export async function GET() {
         paid: getCheckbox(props, PROP.paid) ?? false,
         dateAssigned: getDate(props, PROP.assigned),
         dateExpiring: getDate(props, PROP.expiring),
-        files: getFiles(props, PROP.files),
+        files: [getFirstFileUrl(props, PROP.files, page.id)],
       }
     })
 
@@ -97,14 +91,15 @@ export async function GET() {
 
 /* ---------------- helpers ---------------- */
 
-function getRelationIds(props: any, names: readonly string[]) {
+function getRelation(props:any, names:readonly string[]) {
   for (const n of names) {
     const p = props?.[n]
-    if (p?.type === 'relation' && Array.isArray(p.relation)) {
-      return p.relation.map((r: any) => r?.id).filter(Boolean)
+    console.log('getRelationIds', { prop: n, p })
+    if (p?.type === 'people' && Array.isArray(p.people)) {
+      return p.people.map((r:any)=> ({id: r?.id, avatar: r?.avatar_url, name: r?.name})) as {id: string, avatar: string | null, name: string | null}[]
     }
   }
-  return [] as string[]
+  return []
 }
 
 function extractPerson(page: any): { name: string | null; avatar: string | null } {
@@ -120,7 +115,7 @@ function extractPerson(page: any): { name: string | null; avatar: string | null 
 
   // 2) Avatar: try a "Photo/Avatar/Image" files/url property; else page.icon/cover
   const avatarFile =
-    getFirstFileUrl(props, ['Avatar', 'Photo', 'Image', 'Picture']) ??
+    getFirstFileUrl(props, ['Avatar', 'Photo', 'Image', 'Picture'], page.id)?.url ??
     null
 
   const iconUrl = page.icon?.type === 'external' ? page.icon.external?.url
@@ -193,7 +188,25 @@ function getFiles(props:any, names:readonly string[]) {
   }
   return []
 }
-function getFirstFileUrl(props:any, names:readonly string[]) {
+function getFirstFileUrl(props:any, names:readonly string[],pageId: string) {
   const files = getFiles(props, names)
-  return files[0]?.url ?? null
+  const fileRef = getFirstFileRef(props, names) ?? null
+              const url =
+                  fileRef ? `/api/notion/file?pageId=${pageId}&prop=${encodeURIComponent(fileRef.propName)}&i=${fileRef.index}`
+                  : files[0]?.url 
+              console.log("URL", url);
+  return {
+    url,
+    name: files[0]?.name
+  }
+}
+
+export function getFirstFileRef(props: any, names: readonly string[]) {
+  for (const n of names) {
+    const p = props[n]
+    if (p?.type === 'files' && Array.isArray(p.files) && p.files.length) {
+      return { propName: n, index: 0 }
+    }
+  }
+  return null
 }

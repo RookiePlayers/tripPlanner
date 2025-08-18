@@ -53,3 +53,44 @@ export type DocumentRow = {
   // If Notion is hosting files, we return stable proxy URLs that won't expire
   files: { name?: string; url: string }[]
 }
+
+
+export type PassengerOut = {
+  name: string
+  seat?: string | null
+  boardingPasses?: { name?: string; url: string }[]
+}
+
+export type FileRef = { name?: string | null; url: string }
+export type BoardingPass = FileRef & { legKey?: string | null; legLabel?: string | null }
+export type Passenger = {
+  name: string
+  seat?: string | null
+  boardingPasses: BoardingPass[]
+}
+export type FlightLegJourney = {
+  time?: string | null
+  date?: string | null
+  airport?: string | null
+  city?: string | null
+  weatherCity?: string | null
+  terminal?: string | null
+  dateTime?: string | null
+}
+export type FlightLeg = {
+  id: string
+  flightLeg: string
+  label: string
+  airline?: string | null
+  flightNumber?: string | null
+  class?: string | null
+  duration?: string | null
+  route?: string | null
+  flightModel?: string | null
+  terminal?: string | null
+  depart: FlightLegJourney
+  arrive: FlightLegJourney
+  passengers: Passenger[]
+  files?: string
+  image?: string | null
+}

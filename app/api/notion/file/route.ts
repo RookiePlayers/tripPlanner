@@ -30,7 +30,7 @@ export async function GET(req: Request) {
       file?.type === 'file'     ? file.file?.url :
       file?.type === 'external' ? file.external?.url :
       null
-
+    
     if (!signedUrl) {
       return NextResponse.json({ error: 'File URL missing' }, { status: 404 })
     }

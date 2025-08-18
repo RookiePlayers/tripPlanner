@@ -31,6 +31,9 @@ function DocCard({ doc }: { doc: DocumentRow }) {
       {/* Title & Status */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" gap={1}>
         
+        <Typography level="title-md" sx={{ flexGrow: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {doc.name || '(unnamed)'}
+        </Typography>
         <StatusChip status={doc.status} />
       </Stack>
 
@@ -50,9 +53,7 @@ function DocCard({ doc }: { doc: DocumentRow }) {
           variant="solid"
           color="primary"
           src={doc.personAvatar || undefined}
-        >
-          <UserRound size={14} />
-        </Avatar>
+        />
         <Typography level="body-sm" fontWeight={500}>
           {doc.person || ''}
         </Typography>
@@ -99,6 +100,7 @@ function DocCard({ doc }: { doc: DocumentRow }) {
               color='success'
               startDecorator={<ExternalLink size={16} />}
               component="a"
+              disabled={!f.url}
               href={f.url}
               target="_blank"
               rel="noopener"
@@ -117,7 +119,7 @@ function DocCard({ doc }: { doc: DocumentRow }) {
 }
 
 export default function DocumentsPage() {
-  const { data, error, isLoading } = useSWR<{documents: DocumentRow[]}>('/api/notion/documents', fetcher)
+  const { data, error, isLoading } = useSWR<{documents: DocumentRow[]}>(`/api/notion/documents`, fetcher)
 
   return (
     <div className="space-y-3">
