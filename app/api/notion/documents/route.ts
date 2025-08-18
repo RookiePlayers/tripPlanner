@@ -201,7 +201,7 @@ function getFirstFileUrl(props:any, names:readonly string[],pageId: string) {
   }
 }
 
-export function getFirstFileRef(props: any, names: readonly string[]) {
+function getFirstFileRef(props: any, names: readonly string[]) {
   for (const n of names) {
     const p = props[n]
     if (p?.type === 'files' && Array.isArray(p.files) && p.files.length) {
