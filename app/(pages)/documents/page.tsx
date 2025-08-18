@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import { Card, Typography, Button, Chip, Sheet, Stack, Divider, Grid, Skeleton, Avatar } from '@mui/joy'
 import { FileText, ShieldCheck, Clock, CalendarClock, ExternalLink, UserRound } from 'lucide-react'
 import { DocumentRow } from '../../../types'
+import { Gate } from '../../../components/PasswordGate'
 
 const fetcher = (u:string)=> fetch(u).then(r=> r.json())
 
@@ -122,6 +123,8 @@ export default function DocumentsPage() {
   const { data, error, isLoading } = useSWR<{documents: DocumentRow[]}>(`/api/notion/documents`, fetcher)
 
   return (
+    <Gate area="documents" mode="blur" title="Documents Locked" subtitle="Enter password to view travel documents">
+  
     <div className="space-y-3">
       <Typography level="h2">Travel Documents</Typography>
 
@@ -162,5 +165,6 @@ export default function DocumentsPage() {
         <Typography level="body-sm" sx={{ opacity:.7 }}>No documents yet.</Typography>
       )}
     </div>
+  </Gate>
   )
 }

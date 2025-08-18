@@ -10,6 +10,7 @@ import {
 import {
   Home, Plane, Ticket, ShieldCheck, BedDouble, Map as MapIcon, Wallet, Sun, Moon
 } from 'lucide-react'
+import { GateProvider } from '../components/PasswordGate'
 
 // ---------------- Theme ----------------
 const theme = extendTheme({
@@ -128,6 +129,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname() || '/'
   const isMobile = useIsMobile()
   const pageTitle = titleFromPath(pathname)
+  const secrets = {
+    documents: process.env.NEXT_PUBLIC_DOCS_PASS, // .env.local
+    payments: process.env.NEXT_PUBLIC_DOCS_PASS,   // optional
+    tickets: process.env.NEXT_PUBLIC_DOCS_PASS,    // optional
+  }
 
   // auto-center active btn in bottom strip
   const stripRef = React.useRef<HTMLDivElement | null>(null)
@@ -142,6 +148,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <CssVarsProvider theme={theme} defaultMode="system">
           {/* Background */}
+
+             <GateProvider secrets={secrets} remember>
           <SkyParallax />
           <div className="app-layer">
             {/* Header (desktop + mobile title) */}
@@ -211,6 +219,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Sheet>
 
             {/* Page container */}
+  
             <Box sx={{ maxWidth: 1200, mx:'auto', px: 1.5, py: 2, pb: isMobile ? 8.5 : 2 }}>
               {children}
             </Box>
@@ -297,6 +306,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Sheet>
             )}
           </div>
+          
+          </GateProvider>
         </CssVarsProvider>
       </body>
     </html>

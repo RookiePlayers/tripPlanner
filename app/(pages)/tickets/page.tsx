@@ -11,6 +11,7 @@ import 'swiper/css'
 import { FlightLeg, Passenger } from '../../../types'
 import { CountdownCompact } from '../../../components/Countdown'
 import { isAfter, isBefore } from 'date-fns'
+import { Gate } from '../../../components/PasswordGate'
 
 // Use your existing PDF viewer (no Worker)
 const TicketPDFViewer = React.lazy(() => import('../../../components/TicketPDFViewer'))
@@ -36,6 +37,8 @@ export default function FlightsPage() {
   const flights = data.flights
 
   return (
+    <Gate area="tickets" mode="blur" title="Flight Information Locked" subtitle="Enter password to view flight documents">
+    
     <div className="space-y-3">
 
       <Swiper
@@ -55,6 +58,7 @@ export default function FlightsPage() {
         Slide {active + 1} / {flights.length} — swipe to switch legs.
       </Typography>
     </div>
+    </Gate>
   )
 }
 
