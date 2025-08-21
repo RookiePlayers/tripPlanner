@@ -2,6 +2,9 @@
 import * as React from 'react'
 import useSWR from 'swr'
 import dayjs from 'dayjs'
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Image from 'next/image'
 import {
@@ -23,7 +26,12 @@ const TicketPDFViewer = React.lazy(() => import('../../../components/TicketPDFVi
 const FoodNear = React.lazy(() => import('../../../components/FoodCard'))
 
 dayjs.extend(relativeTime)
-
+dayjs.extend(utc);
+dayjs.extend(timezone);
+// Get the viewer's local IANA TZ (e.g. "Asia/Makassar")
+// NOTE: Only available in the browser.
+const getUserTZ = () =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 const fetcher = (url: string) =>
   fetch(url).then(r => { if (!r.ok) throw new Error('Failed'); return r.json() })
 
@@ -46,23 +54,40 @@ function timeLabel(item: ActivityItem) {
   if (s && e) return `${s}–${e}`
   return s || e || '—'
 }
+
 function timeTillStart(_day: DayData, item: ActivityItem) {
-  const startISO = (item as any).startTimeISO as string | undefined
-  if (!startISO) return timeLabel(item)
-  const when = dayjs(startISO)
-  const diff = when.diff(dayjs(), 'minute')
-  if (diff <= -1) return `${timeLabel(item)} • started ${when.fromNow()}`
-  return `${timeLabel(item)} • starts ${when.fromNow()}`
+  const startISO = (item as any).startTimeISO as string | undefined;
+  if (!startISO) return timeLabel(item);
+
+  const tz = getUserTZ();
+  console.log('User TZ:', tz);
+
+  // normalize both to the same timezone
+  const when = dayjs(startISO).tz(tz);
+  const now = dayjs().tz(tz);
+  console.log('Activity start time:', when.format(), 'Now:', now.format());
+
+  const diff = when.diff(now, "minute");
+
+  if (diff <= -1) {
+    return `${timeLabel(item)} • started ${when.from(now)}`;
+  }
+  return `${timeLabel(item)} • starts ${when.from(now)}`;
 }
 function isPastActivity(_day: DayData, item: ActivityItem) {
-  const endISO = (item as any).endTimeISO as string | undefined
-  const startISO = (item as any).startTimeISO as string | undefined
-  const end = endISO ? dayjs(endISO) : null
-  const start = startISO ? dayjs(startISO) : null
-  const ref = dayjs()
-  if (end) return end.isBefore(ref)
-  if (start) return start.isBefore(ref)
-  return false
+  const endISO = (item as any).endTimeISO as string | undefined;
+  const startISO = (item as any).startTimeISO as string | undefined;
+
+  const tz = getUserTZ();
+
+  // Convert to the user's timezone for a fair comparison
+  const ref   = dayjs().tz(tz);
+  const end   = endISO   ? dayjs(endISO).tz(tz)   : null;
+  const start = startISO ? dayjs(startISO).tz(tz) : null;
+
+  if (end)   return end.isBefore(ref);
+  if (start) return start.isBefore(ref);
+  return false;
 }
 function todayBaliISO(): string {
   return new Intl.DateTimeFormat('en-CA', {

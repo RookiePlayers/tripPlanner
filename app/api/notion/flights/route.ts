@@ -399,6 +399,7 @@ function inferTZFromProps(props:any, isDepart:boolean): string | null {
   const city  = isDepart ? getText(props, PROP.departCity) : getText(props, PROP.arriveCity)
   const ap    = isDepart ? getText(props, PROP.departAp)   : getText(props, PROP.arriveAp)
   const guess = inferTZFromAirportOrCity(city || ap || '')
+  console.log(guess)
   return guess
 }
 function inferTZFromAirportOrCity(s: string): string | null {
