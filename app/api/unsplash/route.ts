@@ -31,9 +31,9 @@ export async function GET(req: Request) {
   const credit = {
     authorName: photo.user?.name,
     authorLink: (photo.user?.links?.html || photo.user?.portfolio_url || '#') +
-      '?utm_source=tripPlanner&utm_medium=referral',
+      '?utm_source=Travpal&utm_medium=referral',
     unsplashLink: (photo.links?.html || 'https://unsplash.com') +
-      '?utm_source=tripPlanner&utm_medium=referral',
+      '?utm_source=Travpal&utm_medium=referral',
   }
 
   return NextResponse.json({
