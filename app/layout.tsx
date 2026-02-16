@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   CssVarsProvider, extendTheme, useColorScheme,
-  Sheet, Box, IconButton, Typography, Button, List, ListItemButton
+  Sheet, Box, IconButton, Typography, Button, Divider
 } from '@mui/joy'
 import {
   Home, Plane, Ticket, ShieldCheck, BedDouble, Map as MapIcon, Wallet, Sun, Moon
@@ -222,6 +222,31 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   
             <Box sx={{ maxWidth: 1200, mx:'auto', px: 1.5, py: 2, pb: isMobile ? 8.5 : 2 }}>
               {children}
+              <Box sx={{ mt: 4 }}>
+                <Divider sx={{ mb: 1.5 }} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    opacity: 0.85,
+                  }}
+                >
+                  <Typography level="body-xs">
+                    © {new Date().getFullYear()} Trip Planner
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <Button component={Link} href="/privacy" size="sm" variant="plain">
+                      Privacy
+                    </Button>
+                    <Button component={Link} href="/terms" size="sm" variant="plain">
+                      Terms
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
             </Box>
 
             {/* Bottom Navigation for Mobile */}
