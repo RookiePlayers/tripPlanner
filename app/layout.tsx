@@ -168,8 +168,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   display: 'flex', alignItems: 'center', gap: 1,
                 }}
               >
-                {/* Brand / Title */}
-                <Typography level="title-lg" sx={{ flex: 1 }}>
+                {/* Brand */}
+                <Typography level="title-lg" sx={{ fontWeight: 700 }}>
+                  Travpal
+                </Typography>
+
+                {/* Page Title */}
+                <Typography level="body-md" sx={{ flex: 1, opacity: 0.8 }}>
                   {pageTitle}
                 </Typography>
 
