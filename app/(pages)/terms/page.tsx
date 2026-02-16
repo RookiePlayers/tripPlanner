@@ -74,7 +74,7 @@ export default function TermsPage() {
         <Stack spacing={1}>
           <Typography level="title-md">Disclaimer</Typography>
           <Typography level="body-sm">
-            The planner is provided "as is" without warranties of any kind. To the extent permitted by law,
+            The planner is provided &quot;as is&quot; without warranties of any kind. To the extent permitted by law,
             we are not liable for losses resulting from the use of the planner or reliance on its content.
           </Typography>
         </Stack>
