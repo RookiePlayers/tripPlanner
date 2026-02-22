@@ -1,4 +1,4 @@
-# Bali Travel Companion
+# Travpal Companion
 
 Interactive, animated, mobile-first travel web app for your Bali 2025 trip (Next.js + Tailwind).
 
