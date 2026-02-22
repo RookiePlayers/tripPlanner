@@ -1,0 +1,20 @@
+{
+    "branches": ["main",     {
+      "name": "staging",
+      "prerelease": "staging"
+    },
+    {
+      "name": "develop",
+      "prerelease": "develop"
+    }],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ],
+    "preset": "conventionalcommits",
+    "tagFormat": "v${version}",
+    "changelogFile": "CHANGELOG.md"
+  }
