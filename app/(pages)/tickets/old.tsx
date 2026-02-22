@@ -1,15 +1,11 @@
 'use client'
 import { useState } from 'react'
-import dynamic from 'next/dynamic'
 import { Card, Typography, Grid, Chip, Sheet, Button } from '@mui/joy'
 import { Plane, User2, Clock, Download, LucidePlane } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import useSWR from 'swr'
 
-const Viewer = dynamic(() => import('@react-pdf-viewer/core').then(m => m.Viewer), { ssr: false })
-import '@react-pdf-viewer/core/lib/styles/index.css'
-import { Worker } from '@react-pdf-viewer/core'
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
