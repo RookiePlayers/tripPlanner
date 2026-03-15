@@ -3,6 +3,7 @@ import axios from 'axios'
 import { setAuthCookies, toPublicSession } from '../../../../config/auth/sessionCookies'
 import { useAuthProvider } from '../../../../lib/hooks/useAuthProvider'
 import { exchangeIdTokenForSession } from '../../../../lib/api/authServerClient'
+import { AuthProvider } from '../../../../types/auth.types'
 
 function mapFirebaseAuthError(error: unknown): string {
   const code = (error as any)?.code
@@ -19,21 +20,22 @@ function mapFirebaseAuthError(error: unknown): string {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = useAuthProvider()
+  const {auth} = useAuthProvider()
   const { idToken: incomingIdToken, email, password } = await req.json()
 
   try {
     let idToken = incomingIdToken
 
     if (!idToken && email && password) {
-      idToken = await auth.signInWithEmailAndPassword(email, password)
+      const authCredentials = await auth.signInWithEmailAndPassword(email, password)
+      idToken = authCredentials.idToken
     }
 
     if (!idToken) {
       return NextResponse.json({ error: 'idToken or email/password is required' }, { status: 400 })
     }
 
-    const { user, session } = await exchangeIdTokenForSession(idToken)
+    const { user, session } = await exchangeIdTokenForSession({idToken, provider: AuthProvider.email})
     const response = NextResponse.json({ user, session: toPublicSession(session) })
     setAuthCookies(response, session)
     return response

@@ -26,6 +26,10 @@ jobs:
         with:
           fetch-depth: 0 # Required for semantic-release to analyze commits and push tags
           path: ./
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.14.0 --activate
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -35,10 +39,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@v1
         with:
           version: latest
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.14.0 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

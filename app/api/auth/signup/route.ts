@@ -3,13 +3,17 @@ import axios from 'axios'
 import { setAuthCookies, toPublicSession } from '../../../../config/auth/sessionCookies'
 import { useAuthProvider } from '../../../../lib/hooks/useAuthProvider'
 import { exchangeIdTokenForSession } from '../../../../lib/api/authServerClient'
+import { AuthProvider } from '../../../../types/auth.types'
 
 export async function POST(req: NextRequest) {
-  const auth = useAuthProvider();
+  const { auth } = useAuthProvider()
   const { email, password } = await req.json()
   try {
-    const idToken = await auth.createUserWithEmailAndPassword(email, password)
-    const { user, session } = await exchangeIdTokenForSession(idToken)
+    const authCredentials = await auth.createUserWithEmailAndPassword(email, password)
+    const { user, session } = await exchangeIdTokenForSession({
+      idToken: authCredentials.idToken,
+      provider: AuthProvider.email,
+    })
     const response = NextResponse.json({ user, session: toPublicSession(session) })
     setAuthCookies(response, session)
     return response

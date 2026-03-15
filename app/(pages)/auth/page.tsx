@@ -14,6 +14,8 @@ import {
 } from '@mui/joy'
 import { Eye, EyeOff, Lock, Mail, User, UserPlus, LogIn, Shield, Globe, Luggage } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
+import { getApp, getApps, initializeApp } from 'firebase/app'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { AUTH_EMAIL_KEY } from '../../../config/auth/constants'
 
 type Mode = 'login' | 'register'
@@ -55,6 +57,7 @@ export default function AuthPage() {
   const [username, setUsername] = React.useState('')
   const [showPassword, setShowPassword] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  const [googleLoading, setGoogleLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState<string | null>(null)
   const [existingEmail, setExistingEmail] = React.useState<string | null>(null)
@@ -137,6 +140,55 @@ export default function AuthPage() {
       setError(err?.message || 'Authentication failed')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const signInWithGoogle = async () => {
+    setError(null)
+    setSuccess(null)
+    setGoogleLoading(true)
+
+    try {
+      const firebaseConfigBase64 = process.env.NEXT_PUBLIC_FIREBASE_CONFIG_BASE64
+
+      if (!firebaseConfigBase64) {
+        throw new Error('Google sign-in is not configured: missing NEXT_PUBLIC_FIREBASE_CONFIG_BASE64')
+      }
+
+      const firebaseConfig = JSON.parse(atob(firebaseConfigBase64))
+      const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig)
+      const firebaseAuth = getAuth(firebaseApp)
+      const provider = new GoogleAuthProvider()
+      provider.addScope('email')
+      provider.addScope('profile')
+
+      const credential = await signInWithPopup(firebaseAuth, provider)
+      const idToken = await credential.user.getIdToken()
+
+      const res = await fetch('/api/auth/oauth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      })
+
+      const data = await parseApiResponse(res)
+      if (!res.ok) {
+        throw new Error(data?.error || data?.message || 'Google sign-in failed')
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(AUTH_EMAIL_KEY, data?.session?.email || credential.user.email || '')
+      }
+
+      setExistingEmail(data?.session?.email || credential.user.email)
+      setSuccess('Signed in successfully.')
+      setPassword('')
+      setUsername('')
+      router.replace(nextPath)
+    } catch (err: any) {
+      setError(err?.message || 'Google sign-in failed')
+    } finally {
+      setGoogleLoading(false)
     }
   }
 
@@ -486,6 +538,26 @@ export default function AuthPage() {
                   }}
                 >
                   {mode === 'login' ? 'Sign in' : 'Create account'}
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  loading={googleLoading}
+                  onClick={signInWithGoogle}
+                  sx={{
+                    py: 1.25,
+                    borderRadius: '10px',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    borderColor: 'var(--color-border-subtle)',
+                    color: 'var(--color-text-primary)',
+                    background: 'transparent',
+                    '&:hover': {
+                      background: 'var(--color-surface-overlay)',
+                    },
+                  }}
+                >
+                  Continue with Google
                 </Button>
 
                 <Button

@@ -1,5 +1,6 @@
 export const SERVER_ROUTES = {
     authLogin: 'auth/login',
+    oauthLogin: 'auth/oauth/login',
     authRefresh: 'auth/refresh',
     authSignout: 'auth/signout',
 } as const

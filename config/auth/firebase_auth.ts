@@ -1,27 +1,32 @@
 import 'server-only'
 import { auth, authInstance } from "../firebase.config";
-import { IAuth } from "./iauth";
+import { IAuth, SignInCredentials } from "./iauth";
+import {AuthCredential, EmailAuthProvider, UserCredential} from 'firebase/auth';
 
 export class FirebaseAuth implements IAuth {
-    async createUserWithEmailAndPassword(email: string, password: string): Promise<string> {
+    async createUserWithEmailAndPassword(email: string, password: string): Promise<SignInCredentials> {
         try {
             const { user } = await auth.createUserWithEmailAndPassword(authInstance, email, password);
             if (!user) {
                 throw new Error("No user returned from Firebase");
             }
-            return await user.getIdToken();
+            const idToken = await user.getIdToken();
+            const credentials = EmailAuthProvider.credential(email, password);
+            return { idToken, credentials };
         } catch (error) {
             console.error("Error creating user:", error);
             throw error;
         }
     }
-    async signInWithEmailAndPassword(email: string, password: string): Promise<string> {
+    async signInWithEmailAndPassword(email: string, password: string): Promise<SignInCredentials> {
         try {
             const { user } = await auth.signInWithEmailAndPassword(authInstance, email, password);
             if (!user) {
                 throw new Error("No user returned from Firebase");
             }
-            return await user.getIdToken();
+            const idToken = await user.getIdToken();
+            const credentials = EmailAuthProvider.credential(email, password);
+            return { idToken, credentials };
         } catch (error) {
             console.error("Error signing in:", error);
             throw error;
@@ -51,6 +56,18 @@ export class FirebaseAuth implements IAuth {
             return { email: user.email || "" };
         } catch (error) {
             console.error("Error getting current user:", error);
+            throw error;
+        }
+    }
+    async signInWithCredentials(credentials: AuthCredential): Promise<UserCredential> {
+        try {
+            const user = await auth.signInWithCredential(authInstance, credentials);
+            if (!user) {
+                throw new Error("No user returned from Firebase");
+            }
+            return user;
+        } catch (error) {
+            console.error("Error signing in with credentials:", error);
             throw error;
         }
     }

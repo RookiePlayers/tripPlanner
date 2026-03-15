@@ -44,3 +44,4 @@ export type Restaurant = {
 export type FoodData = {
   restaurants: Restaurant[]
 }
+

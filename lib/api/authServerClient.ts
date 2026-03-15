@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
 import { AuthLoginResponse, AuthSession } from '../../config/auth/types'
 import { SERVER_ROUTES } from './serverRoutes'
+import { AuthLoginDto } from '../../types/auth.types'
 
 type RetriableConfig = AxiosRequestConfig & { _retry?: boolean }
 
@@ -38,9 +39,18 @@ function asAuthSession(payload: any): AuthSession {
   }
 }
 
-export async function exchangeIdTokenForSession(idToken: string): Promise<AuthLoginResponse> {
+export async function exchangeIdTokenForSession({idToken}: AuthLoginDto): Promise<AuthLoginResponse> {
   console.log(`${getAuthServerBaseUrl()}/${SERVER_ROUTES.authLogin}`)
   const response = await axios.post(`${getAuthServerBaseUrl()}/${SERVER_ROUTES.authLogin}`, { idToken })
+  return {
+    user: response.data?.user,
+    session: asAuthSession(response.data),
+  }
+}
+
+export async function exchangeOauthIdTokenForSession(auth: AuthLoginDto): Promise<AuthLoginResponse> {
+  console.log(`${getAuthServerBaseUrl()}/${SERVER_ROUTES.oauthLogin}`)
+  const response = await axios.post(`${getAuthServerBaseUrl()}/${SERVER_ROUTES.oauthLogin}`, auth)
   return {
     user: response.data?.user,
     session: asAuthSession(response.data),

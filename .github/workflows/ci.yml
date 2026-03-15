@@ -15,16 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.14.0 --activate
+
       - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
           node-version: "24.x"
           cache: "pnpm"
-
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.14.0 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -41,16 +41,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.14.0 --activate
+
       - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
           node-version: "24.x"
           cache: "pnpm"
-
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.14.0 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -71,16 +71,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.14.0 --activate
+
       - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
           node-version: "24.x"
           cache: "pnpm"
-
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.14.0 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
