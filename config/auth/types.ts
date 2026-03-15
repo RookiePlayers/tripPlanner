@@ -7,15 +7,18 @@ export type OAuthProvider =
     | string
 
 export type AuthSession = {
-    userId: string
-    email: string
-    providerSub?: string
-    provider?: OAuthProvider
-    ipAddress?: string
-    userAgent?: string
-    accessToken: string
-    refreshToken: string
-    authToken?: string
+    userId: string;
+    authUid?: string;
+    email: string;
+    emailVerified?: boolean;
+    role?: string;
+    providerSub?: string;
+    provider?: OAuthProvider;
+    ipAddress?: string;
+    userAgent?: string;
+    accessToken: string;
+    refreshToken: string;
+    authToken?: string;
 }
 
 export type AuthUser = {

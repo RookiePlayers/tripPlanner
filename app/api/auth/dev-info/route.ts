@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       ...toPublicSession(sessionBase as any),
-      uid: payload?.user_id || payload?.sub || null,
+      uid: payload?.authUid || payload?.sub || null,
       issuedAt: payload.iat ? new Date(payload.iat * 1000).toISOString() : null,
       expiresAt: payload.exp ? new Date(payload.exp * 1000).toISOString() : null,
       authTime: payload.auth_time ? new Date(payload.auth_time * 1000).toISOString() : null,

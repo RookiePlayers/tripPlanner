@@ -84,7 +84,10 @@ export function toPublicSession(session: Partial<AuthSession> | null) {
   return {
     userId: session.userId ?? null,
     email: session.email ?? null,
+    role: session.role ?? null,
+    emailVerified: session.emailVerified ?? null,
     providerSub: session.providerSub ?? null,
+    authUid: session.authUid ?? null,
     provider: session.provider ?? null,
     ipAddress: session.ipAddress ?? null,
     userAgent: session.userAgent ?? null,
